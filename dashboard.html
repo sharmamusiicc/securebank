@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureBank</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="8" fill="url(#grad1)"/>
+                        <path d="M12 20L18 26L28 14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="grad1" x1="0" y1="0" x2="40" y2="40">
+                                <stop offset="0%" stop-color="#667eea"/>
+                                <stop offset="100%" stop-color="#764ba2"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span>SecureBank</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="overview">
+                    <span class="nav-icon">📊</span>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-page="accounts">
+                    <span class="nav-icon">💳</span>
+                    <span>Accounts</span>
+                </a>
+                <a href="#" class="nav-item" data-page="transactions">
+                    <span class="nav-icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="#" class="nav-item" data-page="transfer">
+                    <span class="nav-icon">💸</span>
+                    <span>Transfer</span>
+                </a>
+                <a href="#" class="nav-item" data-page="loans">
+                    <span class="nav-icon">🏦</span>
+                    <span>Loans</span>
+                </a>
+                <a href="#" class="nav-item" data-page="bills">
+                    <span class="nav-icon">🧾</span>
+                    <span>Pay Bills</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logoutBtn">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Welcome back, <span id="userName">John Doe</span></p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar">JD</div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Overview Page -->
+            <div class="page-content" id="overview-page">
+                <div class="cards-grid">
+                    <div class="account-card checking-card">
+                        <div class="card-header">
+                            <div>
+                                <p class="card-label">Checking Account</p>
+                                <p class="account-number">**** **** 4532</p>
+                            </div>
+                            <div class="card-icon">💳</div>
+                        </div>
+                        <div class="card-balance">
+                            <p class="balance-amount">$12,458.50</p>
+                            <p class="balance-change positive">+2.5% this month</p>
+                        </div>
+                    </div>
+                    
+                    <div class="account-card savings-card">
+                        <div class="card-header">
+                            <div>
+                                <p class="card-label">Savings Account</p>
+                                <p class="account-number">**** **** 8721</p>
+                            </div>
+                            <div class="card-icon">💰</div>
+                        </div>
+                        <div class="card-balance">
+                            <p class="balance-amount">$45,280.75</p>
+                            <p class="balance-change positive">+5.2% this month</p>
+                        </div>
+                    </div>
+                    
+                    <div class="account-card credit-card">
+                        <div class="card-header">
+                            <div>
+                                <p class="card-label">Credit Card</p>
+                                <p class="account-number">**** **** 3298</p>
+                            </div>
+                            <div class="card-icon">💎</div>
+                        </div>
+                        <div class="card-balance">
+                            <p class="balance-amount">$2,340.00</p>
+                            <p class="balance-change">Available: $7,660</p>
+                        </div>
+                    </div>
+                    
+                    <div class="account-card loan-card">
+                        <div class="card-header">
+                            <div>
+                                <p class="card-label">Home Loan</p>
+                                <p class="account-number">**** **** 5567</p>
+                            </div>
+                            <div class="card-icon">🏠</div>
+                        </div>
+                        <div class="card-balance">
+                            <p class="balance-amount">$185,500.00</p>
+                            <p class="balance-change">Due: $1,850/mo</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-grid">
+                    <div class="recent-transactions">
+                        <div class="section-header">
+                            <h2>Recent Transactions</h2>
+                            <a href="#" class="view-all">View All →</a>
+                        </div>
+                        <div class="transactions-list" id="recentTransactionsList"></div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h2>Quick Actions</h2>
+                        <div class="actions-grid">
+                            <button class="action-btn" data-action="transfer">
+                                <span class="action-icon">💸</span>
+                                <span>Transfer Money</span>
+                            </button>
+                            <button class="action-btn" data-action="bills">
+                                <span class="action-icon">🧾</span>
+                                <span>Pay Bills</span>
+                            </button>
+                            <button class="action-btn" data-action="deposit">
+                                <span class="action-icon">➕</span>
+                                <span>Deposit Check</span>
+                            </button>
+                            <button class="action-btn" data-action="statement">
+                                <span class="action-icon">📄</span>
+                                <span>Statements</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Accounts Page -->
+            <div class="page-content hidden" id="accounts-page">
+                <div class="accounts-list">
+                    <div class="account-detail-card">
+                        <div class="account-detail-header">
+                            <div class="account-info">
+                                <h3>Checking Account</h3>
+                                <p>Account Number: 1234 5678 9012 4532</p>
+                                <p>Routing Number: 021000021</p>
+                            </div>
+                            <div class="account-balance-large">$12,458.50</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn-secondary">Transfer</button>
+                            <button class="btn-secondary">Statements</button>
+                            <button class="btn-secondary">Details</button>
+                        </div>
+                    </div>
+                    
+                    <div class="account-detail-card">
+                        <div class="account-detail-header">
+                            <div class="account-info">
+                                <h3>Savings Account</h3>
+                                <p>Account Number: 1234 5678 9012 8721</p>
+                                <p>Interest Rate: 2.5% APY</p>
+                            </div>
+                            <div class="account-balance-large">$45,280.75</div>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn-secondary">Transfer</button>
+                            <button class="btn-secondary">Statements</button>
+                            <button class="btn-secondary">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transactions Page -->
+            <div class="page-content hidden" id="transactions-page">
+                <div class="transactions-filters">
+                    <select id="accountFilter" class="filter-select">
+                        <option value="all">All Accounts</option>
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                        <option value="credit">Credit Card</option>
+                    </select>
+                    <select id="typeFilter" class="filter-select">
+                        <option value="all">All Types</option>
+                        <option value="debit">Debit</option>
+                        <option value="credit">Credit</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="filter-input">
+                </div>
+                <div class="transactions-table" id="transactionsTable"></div>
+            </div>
+            
+            <!-- Transfer Page -->
+            <div class="page-content hidden" id="transfer-page">
+                <div class="transfer-container">
+                    <div class="transfer-form-card">
+                        <h2>Transfer Money</h2>
+                        <form id="transferForm" class="transfer-form">
+                            <div class="form-group">
+                                <label>From Account</label>
+                                <select id="fromAccount" required>
+                                    <option value="">Select Account</option>
+                                    <option value="checking">Checking (**** 4532) - $12,458.50</option>
+                                    <option value="savings">Savings (**** 8721) - $45,280.75</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>To Account</label>
+                                <select id="toAccount" required>
+                                    <option value="">Select Account</option>
+                                    <option value="checking">Checking (**** 4532)</option>
+                                    <option value="savings">Savings (**** 8721)</option>
+                                    <option value="external">External Account</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="number" id="transferAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Description (Optional)</label>
+                                <input type="text" id="transferDescription" placeholder="Add a note...">
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">Transfer Now</button>
+                        </form>
+                    </div>
+                    
+                    <div class="transfer-summary-card">
+                        <h3>Transfer Summary</h3>
+                        <div class="summary-item">
+                            <span>Processing Time</span>
+                            <span>Instant</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Transfer Fee</span>
+                            <span>$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Daily Limit</span>
+                            <span>$10,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loans Page -->
+            <div class="page-content hidden" id="loans-page">
+                <div class="loans-grid">
+                    <div class="loan-detail-card">
+                        <div class="loan-header">
+                            <h3>Home Loan</h3>
+                            <span class="loan-status active">Active</span>
+                        </div>
+                        <div class="loan-details">
+                            <div class="loan-info-row">
+                                <span>Loan Amount</span>
+                                <strong>$250,000.00</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Outstanding Balance</span>
+                                <strong>$185,500.00</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Interest Rate</span>
+                                <strong>3.25% APR</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Monthly Payment</span>
+                                <strong>$1,850.00</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Next Payment Due</span>
+                                <strong>Dec 1, 2024</strong>
+                            </div>
+                        </div>
+                        <div class="loan-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 26%"></div>
+                            </div>
+                            <p>26% Paid</p>
+                        </div>
+                        <button class="btn-primary">Make Payment</button>
+                    </div>
+                    
+                    <div class="loan-detail-card">
+                        <div class="loan-header">
+                            <h3>Auto Loan</h3>
+                            <span class="loan-status active">Active</span>
+                        </div>
+                        <div class="loan-details">
+                            <div class="loan-info-row">
+                                <span>Loan Amount</span>
+                                <strong>$35,000.00</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Outstanding Balance</span>
+                                <strong>$22,450.00</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Interest Rate</span>
+                                <strong>4.75% APR</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Monthly Payment</span>
+                                <strong>$650.00</strong>
+                            </div>
+                            <div class="loan-info-row">
+                                <span>Next Payment Due</span>
+                                <strong>Dec 1, 2024</strong>
+                            </div>
+                        </div>
+                        <div class="loan-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 36%"></div>
+                            </div>
+                            <p>36% Paid</p>
+                        </div>
+                        <button class="btn-primary">Make Payment</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bills Page -->
+            <div class="page-content hidden" id="bills-page">
+                <div class="bills-container">
+                    <div class="bill-form-card">
+                        <h2>Pay Bills</h2>
+                        <form id="billPaymentForm" class="bill-form">
+                            <div class="form-group">
+                                <label>Payee</label>
+                                <select id="payee" required>
+                                    <option value="">Select Payee</option>
+                                    <option value="electricity">Electricity Company</option>
+                                    <option value="internet">Internet Provider</option>
+                                    <option value="water">Water Department</option>
+                                    <option value="phone">Phone Company</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>From Account</label>
+                                <select id="billFromAccount" required>
+                                    <option value="">Select Account</option>
+                                    <option value="checking">Checking (**** 4532) - $12,458.50</option>
+                                    <option value="savings">Savings (**** 8721) - $45,280.75</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Payment Date</label>
+                                <input type="date" id="billDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Account Number</label>
+                                <input type="text" id="billAccountNumber" placeholder="Payee account number" required>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">Pay Bill</button>
+                        </form>
+                    </div>
+                    
+                    <div class="recent-bills-card">
+                        <h3>Recent Bill Payments</h3>
+                        <div class="bills-list">
+                            <div class="bill-item">
+                                <div class="bill-info">
+                                    <strong>Electricity Company</strong>
+                                    <span>Nov 15, 2024</span>
+                                </div>
+                                <div class="bill-amount">$125.50</div>
+                            </div>
+                            <div class="bill-item">
+                                <div class="bill-info">
+                                    <strong>Internet Provider</strong>
+                                    <span>Nov 10, 2024</span>
+                                </div>
+                                <div class="bill-amount">$79.99</div>
+                            </div>
+                            <div class="bill-item">
+                                <div class="bill-info">
+                                    <strong>Water Department</strong>
+                                    <span>Nov 5, 2024</span>
+                                </div>
+                                <div class="bill-amount">$45.20</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">✓</div>
+            <h2 id="modalTitle">Success!</h2>
+            <p id="modalMessage">Your transaction was completed successfully.</p>
+            <button class="btn-primary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
