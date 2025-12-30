@@ -40,39 +40,10 @@ const initialData = initializeData();
 mockTransactions = initialData.transactions;
 accountBalances = initialData.accounts;
 
-// User profile data
-function getUserProfile() {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) {
-        return JSON.parse(savedProfile);
-    }
-    
-    // Default profile
-    return {
-        username: 'demo',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phone: '+1 (555) 123-4567',
-        address: '123 Main Street',
-        city: 'Toronto',
-        state: 'ON',
-        zipCode: 'M5H 2N2',
-        country: 'Canada'
-    };
-}
-
-let userProfile = getUserProfile();
-
-// Save user profile
-function saveUserProfile() {
-    localStorage.setItem('userProfile', JSON.stringify(userProfile));
-}
-
-// Get full name
-function getFullName() {
-    return `${userProfile.firstName} ${userProfile.lastName}`;
-}
+const userData = {
+    name: 'John Doe',
+    username: 'demo'
+};
 
 // Save data to localStorage
 function saveData() {
@@ -147,11 +118,10 @@ if (document.querySelector('.dashboard-body')) {
     }
     
     // Set user name
-    const fullName = getFullName();
-    const userNameElements = document.querySelectorAll('#userName');
-    userNameElements.forEach(element => {
-        element.textContent = fullName;
-    });
+    const userName = localStorage.getItem('userName');
+    if (userName) {
+        document.getElementById('userName').textContent = userName;
+    }
     
     // Load recent transactions
     loadRecentTransactions();
@@ -189,8 +159,7 @@ if (document.querySelector('.dashboard-body')) {
                     'transactions': 'Transaction History',
                     'transfer': 'Transfer Money',
                     'loans': 'My Loans',
-                    'bills': 'Pay Bills',
-                    'profile': 'My Profile'
+                    'bills': 'Pay Bills'
                 };
                 
                 const pageTitle = this.getAttribute('data-page');
@@ -346,113 +315,19 @@ if (document.querySelector('.dashboard-body')) {
         localStorage.removeItem('userName');
         window.location.href = 'index.html';
     });
-
-        // Profile form
-    const profileForm = document.getElementById('profileForm');
-    if (profileForm) {
-        // Load profile data
-        loadProfileData();
         
-        profileForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Update profile
-            userProfile.firstName = document.getElementById('profileFirstName').value;
-            userProfile.lastName = document.getElementById('profileLastName').value;
-            userProfile.email = document.getElementById('profileEmail').value;
-            userProfile.phone = document.getElementById('profilePhone').value;
-            userProfile.address = document.getElementById('profileAddress').value;
-            userProfile.city = document.getElementById('profileCity').value;
-            userProfile.state = document.getElementById('profileState').value;
-            userProfile.zipCode = document.getElementById('profileZip').value;
-            userProfile.country = document.getElementById('profileCountry').value;
-            
-            saveUserProfile();
-            
-            // Update name display throughout the app
-            const fullName = getFullName();
-            document.querySelectorAll('#userName').forEach(el => {
-                el.textContent = fullName;
-            });
-            
-            showModal('Profile Updated!', 'Your profile information has been saved successfully.');
-        });
-    }
-    
-    // Loan payment form
-    const loanPaymentForm = document.getElementById('loanPaymentForm');
-    if (loanPaymentForm) {
-        loanPaymentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const amount = parseFloat(document.getElementById('loanPaymentAmount').value);
-            const fromAccount = document.getElementById('loanFromAccount').value;
-            const loanType = document.getElementById('loanPaymentForm').dataset.loanType;
-            
-            if (!fromAccount) {
-                alert('Please select an account');
-                return;
-            }
-            
-            // Check balance
-            if (accountBalances[fromAccount] < amount) {
-                alert('Insufficient balance!');
-                return;
-            }
-            
-            // Update account balance
-            updateAccountBalance(fromAccount, -amount);
-            
-            // Update loan balance
-            if (loanType === 'home') {
-                accountBalances.loan -= amount;
-            } else if (loanType === 'auto') {
-                if (!accountBalances.autoLoan) {
-                    accountBalances.autoLoan = 22450.00;
-                }
-                accountBalances.autoLoan -= amount;
-            }
-            
-            saveData();
-            
-            // Add transaction
-            const loanName = loanType === 'home' ? 'Home Loan' : 'Auto Loan';
-            addTransaction(
-                `${loanName} Payment`,
-                -amount,
-                'debit',
-                'Loan Payment',
-                fromAccount
-            );
-            
-            // Update displays
-            updateLoanDisplays();
-            updateAccountCards();
-            loadRecentTransactions();
-            loadTransactionsTable();
-            
-            closeLoanModal();
-            
-            showModal(
-                'Payment Successful!',
-                `Your ${loanName} payment of $${amount.toFixed(2)} has been processed.`
-            );
-        });
-    }
     // Add reset data functionality (for demo purposes)
     // You can add a button in the UI if you want users to reset to default data
     window.resetBankData = function() {
         if (confirm('This will reset all account balances and transactions to default values. Continue?')) {
             localStorage.removeItem('bankTransactions');
             localStorage.removeItem('bankAccounts');
-            localStorage.removeItem('userProfile');
             location.reload();
         }
     };
     
     // Initial load of account cards
     updateAccountCards();
-    updateLoanDisplays();
     // Filters for transactions
     const accountFilter = document.getElementById('accountFilter');
     const typeFilter = document.getElementById('typeFilter');
@@ -666,116 +541,4 @@ document.documentElement.style.scrollBehavior = 'smooth';
 if (document.getElementById('billDate')) {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('billDate').value = today;
-}
-
-// Load profile data into form
-function loadProfileData() {
-    if (document.getElementById('profileFirstName')) {
-        document.getElementById('profileFirstName').value = userProfile.firstName;
-        document.getElementById('profileLastName').value = userProfile.lastName;
-        document.getElementById('profileEmail').value = userProfile.email;
-        document.getElementById('profilePhone').value = userProfile.phone;
-        document.getElementById('profileAddress').value = userProfile.address;
-        document.getElementById('profileCity').value = userProfile.city;
-        document.getElementById('profileState').value = userProfile.state;
-        document.getElementById('profileZip').value = userProfile.zipCode;
-        document.getElementById('profileCountry').value = userProfile.country;
-    }
-}
-
-// Open loan payment modal
-function openLoanPaymentModal(loanType) {
-    const modal = document.getElementById('loanPaymentModal');
-    const form = document.getElementById('loanPaymentForm');
-    const title = document.getElementById('loanModalTitle');
-    const minPayment = document.getElementById('loanMinPayment');
-    
-    form.dataset.loanType = loanType;
-    
-    if (loanType === 'home') {
-        title.textContent = 'Make Home Loan Payment';
-        minPayment.textContent = 'Minimum payment: $1,850.00';
-    } else {
-        title.textContent = 'Make Auto Loan Payment';
-        minPayment.textContent = 'Minimum payment: $650.00';
-    }
-    
-    // Update account options with current balances
-    const loanFromAccount = document.getElementById('loanFromAccount');
-    loanFromAccount.innerHTML = `
-        <option value=\"\">Select Account</option>
-        <option value=\"checking\">Checking (**** 4532) - $${accountBalances.checking.toFixed(2)}</option>
-        <option value=\"savings\">Savings (**** 8721) - $${accountBalances.savings.toFixed(2)}</option>
-    `;
-    
-    modal.classList.add('show');
-}
-
-// Close loan payment modal
-function closeLoanModal() {
-    const modal = document.getElementById('loanPaymentModal');
-    const form = document.getElementById('loanPaymentForm');
-    modal.classList.remove('show');
-    form.reset();
-}
-
-// Update loan displays
-function updateLoanDisplays() {
-    // Initialize auto loan if not exists
-    if (!accountBalances.autoLoan) {
-        accountBalances.autoLoan = 22450.00;
-    }
-    
-    // Home loan
-    const homeLoanBalance = document.getElementById('homeLoanBalance');
-    if (homeLoanBalance) {
-        const balance = accountBalances.loan || 185500;
-        homeLoanBalance.textContent = `$${balance.toFixed(2)}`;
-        
-        // Update progress
-        const originalAmount = 250000;
-        const paidAmount = originalAmount - balance;
-        const percentPaid = (paidAmount / originalAmount * 100).toFixed(0);
-        
-        const progressBar = document.getElementById('homeLoanProgress');
-        const progressText = document.getElementById('homeLoanPercent');
-        
-        if (progressBar) {
-            progressBar.style.width = percentPaid + '%';
-        }
-        if (progressText) {
-            progressText.textContent = percentPaid + '% Paid';
-        }
-    }
-    
-    // Auto loan
-    const autoLoanBalance = document.getElementById('autoLoanBalance');
-    if (autoLoanBalance) {
-        const balance = accountBalances.autoLoan || 22450;
-        autoLoanBalance.textContent = `$${balance.toFixed(2)}`;
-        
-        // Update progress
-        const originalAmount = 35000;
-        const paidAmount = originalAmount - balance;
-        const percentPaid = (paidAmount / originalAmount * 100).toFixed(0);
-        
-        const progressBar = document.getElementById('autoLoanProgress');
-        const progressText = document.getElementById('autoLoanPercent');
-        
-        if (progressBar) {
-            progressBar.style.width = percentPaid + '%';
-        }
-        if (progressText) {
-            progressText.textContent = percentPaid + '% Paid';
-        }
-    }
-}
-
-// Close loan modal on background click
-if (document.getElementById('loanPaymentModal')) {
-    document.getElementById('loanPaymentModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeLoanModal();
-        }
-    });
 }
