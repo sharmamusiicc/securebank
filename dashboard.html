@@ -184,10 +184,10 @@
                                 <p>Account Number: 1234 5678 9012 4532</p>
                                 <p>Routing Number: 021000021</p>
                             </div>
-                            <div class="account-balance-large">$12,458.50</div>
+                            <div class=\"account-balance-large\" id=\"checkingAccountBalance\">$12,458.50</div>
                         </div>
                         <div class="account-actions">
-                            <button class="btn-secondary">Transfer</button>
+                            <button class=\"btn-secondary\" onclick=\"document.querySelector('[data-page=transfer]').click()\">Transfer</button>
                             <button class="btn-secondary">Statements</button>
                             <button class="btn-secondary">Details</button>
                         </div>
@@ -200,13 +200,17 @@
                                 <p>Account Number: 1234 5678 9012 8721</p>
                                 <p>Interest Rate: 2.5% APY</p>
                             </div>
-                            <div class="account-balance-large">$45,280.75</div>
+                            <div class=\"account-balance-large\" id=\"savingsAccountBalance\">$45,280.75</div>
                         </div>
                         <div class="account-actions">
-                            <button class="btn-secondary">Transfer</button>
+                            <button class=\"btn-secondary\" onclick=\"document.querySelector('[data-page=transfer]').click()\">Transfer</button>
                             <button class="btn-secondary">Statements</button>
                             <button class="btn-secondary">Details</button>
                         </div>
+                                            
+                    <div style=\"margin-top: 2rem; padding: 1rem; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px;\">
+                        <p style=\"margin: 0; color: #856404;\"><strong>Demo Mode:</strong> All transactions and balances are saved in your browser. <a href=\"#\" onclick=\"resetBankData(); return false;\" style=\"color: #856404; text-decoration: underline;\">Click here to reset to default values</a>.</p>
+                    </div>
                     </div>
                 </div>
             </div>
