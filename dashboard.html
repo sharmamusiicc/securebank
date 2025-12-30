@@ -54,6 +54,10 @@
                     <span class="nav-icon">🧾</span>
                     <span>Pay Bills</span>
                 </a>
+                                <a href=\"#\" class=\"nav-item\" data-page=\"profile\">
+                    <span class=\"nav-icon\">👤</span>
+                    <span>Profile</span>
+                </a>
             </nav>
             
             <div class="sidebar-footer">
@@ -301,12 +305,12 @@
                         </div>
                         <div class="loan-details">
                             <div class="loan-info-row">
-                                <span>Loan Amount</span>
+                                <span>Original Loan Amount</span>
                                 <strong>$250,000.00</strong>
                             </div>
                             <div class="loan-info-row">
                                 <span>Outstanding Balance</span>
-                                <strong>$185,500.00</strong>
+                                <strong id=\"homeLoanBalance\">$185,500.00</strong>
                             </div>
                             <div class="loan-info-row">
                                 <span>Interest Rate</span>
@@ -318,16 +322,16 @@
                             </div>
                             <div class="loan-info-row">
                                 <span>Next Payment Due</span>
-                                <strong>Dec 1, 2024</strong>
+                                <strong>Jan 1, 2025</strong>
                             </div>
                         </div>
                         <div class="loan-progress">
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 26%"></div>
+                                <div class=\"progress-fill\" id=\"homeLoanProgress\" style=\"width: 26%\"></div>
                             </div>
-                            <p>26% Paid</p>
+                            <p id=\"homeLoanPercent\">26% Paid</p>
                         </div>
-                        <button class="btn-primary">Make Payment</button>
+                        <button class=\"btn-primary\" onclick=\"openLoanPaymentModal('home')\">Make Payment</button>
                     </div>
                     
                     <div class="loan-detail-card">
@@ -337,12 +341,12 @@
                         </div>
                         <div class="loan-details">
                             <div class="loan-info-row">
-                                <span>Loan Amount</span>
+                                <span>Original Loan Amount</span>
                                 <strong>$35,000.00</strong>
                             </div>
                             <div class="loan-info-row">
                                 <span>Outstanding Balance</span>
-                                <strong>$22,450.00</strong>
+                                <strong id=\"autoLoanBalance\">$22,450.00</strong>
                             </div>
                             <div class="loan-info-row">
                                 <span>Interest Rate</span>
@@ -354,16 +358,16 @@
                             </div>
                             <div class="loan-info-row">
                                 <span>Next Payment Due</span>
-                                <strong>Dec 1, 2024</strong>
+                                <strong>Jan 1, 2025</strong>
                             </div>
                         </div>
                         <div class="loan-progress">
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: 36%"></div>
+                                <div class=\"progress-fill\" id=\"autoLoanProgress\" style=\"width: 36%\"></div>
                             </div>
-                            <p>36% Paid</p>
+                            <p id=\"autoLoanPercent\">36% Paid</p>
                         </div>
-                        <button class="btn-primary">Make Payment</button>
+                        <button class=\"btn-primary\" onclick=\"openLoanPaymentModal('auto')\">Make Payment</button>
                     </div>
                 </div>
             </div>
@@ -442,6 +446,90 @@
                     </div>
                 </div>
             </div>
+                        
+            <!-- Profile Page -->
+            <div class=\"page-content hidden\" id=\"profile-page\">
+                <div class=\"profile-container\">
+                    <div class=\"profile-card\">
+                        <h2>Personal Information</h2>
+                        <form id=\"profileForm\" class=\"profile-form\">
+                            <div class=\"form-row\">
+                                <div class=\"form-group\">
+                                    <label>First Name</label>
+                                    <input type=\"text\" id=\"profileFirstName\" required>
+                                </div>
+                                <div class=\"form-group\">
+                                    <label>Last Name</label>
+                                    <input type=\"text\" id=\"profileLastName\" required>
+                                </div>
+                            </div>
+                            
+                            <div class=\"form-row\">
+                                <div class=\"form-group\">
+                                    <label>Email Address</label>
+                                    <input type=\"email\" id=\"profileEmail\" required>
+                                </div>
+                                <div class=\"form-group\">
+                                    <label>Phone Number</label>
+                                    <input type=\"tel\" id=\"profilePhone\" required>
+                                </div>
+                            </div>
+                            
+                            <div class=\"form-group\">
+                                <label>Street Address</label>
+                                <input type=\"text\" id=\"profileAddress\" required>
+                            </div>
+                            
+                            <div class=\"form-row\">
+                                <div class=\"form-group\">
+                                    <label>City</label>
+                                    <input type=\"text\" id=\"profileCity\" required>
+                                </div>
+                                <div class=\"form-group\">
+                                    <label>State/Province</label>
+                                    <input type=\"text\" id=\"profileState\" required>
+                                </div>
+                            </div>
+                            
+                            <div class=\"form-row\">
+                                <div class=\"form-group\">
+                                    <label>ZIP/Postal Code</label>
+                                    <input type=\"text\" id=\"profileZip\" required>
+                                </div>
+                                <div class=\"form-group\">
+                                    <label>Country</label>
+                                    <input type=\"text\" id=\"profileCountry\" required>
+                                </div>
+                            </div>
+                            
+                            <div class=\"form-actions\">
+                                <button type=\"submit\" class=\"btn-primary\">Save Changes</button>
+                                <button type=\"button\" class=\"btn-secondary\" onclick=\"loadProfileData()\">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class=\"profile-summary-card\">
+                        <h3>Account Summary</h3>
+                        <div class=\"summary-item\">
+                            <span>Member Since</span>
+                            <span>January 2020</span>
+                        </div>
+                        <div class=\"summary-item\">
+                            <span>Account Status</span>
+                            <span style=\"color: #38b2ac; font-weight: 600;\">Active</span>
+                        </div>
+                        <div class=\"summary-item\">
+                            <span>Total Accounts</span>
+                            <span>4</span>
+                        </div>
+                        <div class=\"summary-item\">
+                            <span>Last Login</span>
+                            <span id=\"lastLogin\">Today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
     
@@ -454,7 +542,34 @@
             <button class="btn-primary" onclick="closeModal()">Close</button>
         </div>
     </div>
-    
+        
+    <!-- Loan Payment Modal -->
+    <div class=\"modal\" id=\"loanPaymentModal\">
+        <div class=\"modal-content\">
+            <h2 id=\"loanModalTitle\">Make Loan Payment</h2>
+            <form id=\"loanPaymentForm\" class=\"loan-payment-form\">
+                <div class=\"form-group\">
+                    <label>Payment Amount</label>
+                    <input type=\"number\" id=\"loanPaymentAmount\" placeholder=\"Enter amount\" step=\"0.01\" min=\"0.01\" required>
+                    <small id=\"loanMinPayment\" style=\"color: #718096; margin-top: 0.25rem; display: block;\"></small>
+                </div>
+                
+                <div class=\"form-group\">
+                    <label>From Account</label>
+                    <select id=\"loanFromAccount\" required>
+                        <option value=\"\">Select Account</option>
+                        <option value=\"checking\">Checking</option>
+                        <option value=\"savings\">Savings</option>
+                    </select>
+                </div>
+                
+                <div class=\"form-actions\" style=\"display: flex; gap: 1rem; margin-top: 1.5rem;\">
+                    <button type=\"submit\" class=\"btn-primary\" style=\"flex: 1;\">Make Payment</button>
+                    <button type=\"button\" class=\"btn-secondary\" onclick=\"closeLoanModal()\" style=\"flex: 1;\">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
