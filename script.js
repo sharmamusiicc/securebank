@@ -1,26 +1,86 @@
-// Mock Data
-const mockTransactions = [
-    { id: 1, name: 'Amazon Purchase', date: '2024-11-20', amount: -85.50, type: 'debit', category: 'Shopping' },
-    { id: 2, name: 'Salary Deposit', date: '2024-11-18', amount: 5250.00, type: 'credit', category: 'Income' },
-    { id: 3, name: 'Netflix Subscription', date: '2024-11-17', amount: -15.99, type: 'debit', category: 'Entertainment' },
-    { id: 4, name: 'Grocery Store', date: '2024-11-16', amount: -142.30, type: 'debit', category: 'Food' },
-    { id: 5, name: 'Freelance Payment', date: '2024-11-15', amount: 850.00, type: 'credit', category: 'Income' },
-    { id: 6, name: 'Gas Station', date: '2024-11-14', amount: -52.75, type: 'debit', category: 'Transportation' },
-    { id: 7, name: 'Restaurant', date: '2024-11-13', amount: -68.90, type: 'debit', category: 'Food' },
-    { id: 8, name: 'ATM Withdrawal', date: '2024-11-12', amount: -200.00, type: 'debit', category: 'Cash' }
-];
+function initializeData() {
+    // Check if data exists in localStorage
+    const savedTransactions = localStorage.getItem('bankTransactions');
+    const savedAccounts = localStorage.getItem('bankAccounts');
+    
+    if (savedTransactions) {
+        return {
+            transactions: JSON.parse(savedTransactions),
+            accounts: JSON.parse(savedAccounts)
+        };
+    }
+    
+    // Default data if nothing in localStorage
+    return {
+        transactions: [
+            { id: 1, name: 'Amazon Purchase', date: '2024-11-20', amount: -85.50, type: 'debit', category: 'Shopping', account: 'checking' },
+            { id: 2, name: 'Salary Deposit', date: '2024-11-18', amount: 5250.00, type: 'credit', category: 'Income', account: 'checking' },
+            { id: 3, name: 'Netflix Subscription', date: '2024-11-17', amount: -15.99, type: 'debit', category: 'Entertainment', account: 'checking' },
+            { id: 4, name: 'Grocery Store', date: '2024-11-16', amount: -142.30, type: 'debit', category: 'Food', account: 'checking' },
+            { id: 5, name: 'Freelance Payment', date: '2024-11-15', amount: 850.00, type: 'credit', category: 'Income', account: 'savings' },
+            { id: 6, name: 'Gas Station', date: '2024-11-14', amount: -52.75, type: 'debit', category: 'Transportation', account: 'checking' },
+            { id: 7, name: 'Restaurant', date: '2024-11-13', amount: -68.90, type: 'debit', category: 'Food', account: 'checking' },
+            { id: 8, name: 'ATM Withdrawal', date: '2024-11-12', amount: -200.00, type: 'debit', category: 'Cash', account: 'checking' }
+        ],
+        accounts: {
+            checking: 12458.50,
+            savings: 45280.75,
+            credit: 2340.00,
+            loan: 185500.00
+        }
+    };
+}
+
+// Global data
+let mockTransactions = [];
+let accountBalances = {};
+
+// Initialize on page load
+const initialData = initializeData();
+mockTransactions = initialData.transactions;
+accountBalances = initialData.accounts;
 
 const userData = {
     name: 'John Doe',
-    username: 'demo',
-    accounts: {
-        checking: 12458.50,
-        savings: 45280.75,
-        credit: 2340.00,
-        loan: 185500.00
-    }
+    username: 'demo'
 };
 
+// Save data to localStorage
+function saveData() {
+    localStorage.setItem('bankTransactions', JSON.stringify(mockTransactions));
+    localStorage.setItem('bankAccounts', JSON.stringify(accountBalances));
+}
+
+// Add new transaction
+function addTransaction(name, amount, type, category, account) {
+    const newTransaction = {
+        id: mockTransactions.length + 1,
+        name: name,
+        date: new Date().toISOString().split('T')[0],
+        amount: amount,
+        type: type,
+        category: category,
+        account: account
+    };
+    
+    // Add to beginning of array (most recent first)
+    mockTransactions.unshift(newTransaction);
+    
+    // Save to localStorage
+    saveData();
+    
+    return newTransaction;
+}
+
+// Update account balance
+function updateAccountBalance(account, amount) {
+    if (accountBalances[account] !== undefined) {
+        accountBalances[account] += amount;
+        saveData();
+        return true;
+    }
+    return false;
+}
 // Login Functionality
 if (document.getElementById('loginForm')) {
     document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -132,8 +192,8 @@ if (document.querySelector('.dashboard-body')) {
             
             const fromAccount = document.getElementById('fromAccount').value;
             const toAccount = document.getElementById('toAccount').value;
-            const amount = document.getElementById('transferAmount').value;
-            const description = document.getElementById('transferDescription').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const description = document.getElementById('transferDescription').value || 'Transfer';
             
             if (fromAccount === toAccount) {
                 alert('Please select different accounts for transfer');
@@ -141,9 +201,47 @@ if (document.querySelector('.dashboard-body')) {
             }
             
             // Simulate transfer
+             if (!fromAccount || !toAccount) {
+                alert('Please select both accounts');
+                return;
+            }
+            
+            // Check if sufficient balance
+            if (accountBalances[fromAccount] < amount) {
+                alert('Insufficient balance in source account!');
+                return;
+            }
+            
+            // Update account balances
+            updateAccountBalance(fromAccount, -amount);
+            updateAccountBalance(toAccount, amount);
+            
+            // Add debit transaction for source account
+            const fromAccountName = getAccountName(fromAccount);
+            addTransaction(
+                `Transfer to ${getAccountName(toAccount)} - ${description}`,
+                -amount,
+                'debit',
+                'Transfer',
+                fromAccount
+            );
+            
+            // Add credit transaction for destination account
+            addTransaction(
+                `Transfer from ${fromAccountName} - ${description}`,
+                amount,
+                'credit',
+                'Transfer',
+                toAccount
+            );
+            
+            // Reload recent transactions and update account cards
+            loadRecentTransactions();
+            loadTransactionsTable();
+            updateAccountCards();
             showModal(
                 'Transfer Successful!',
-                `$${parseFloat(amount).toFixed(2)} has been transferred successfully.`
+                `$${amount.toFixed(2)} has been transferred from ${fromAccountName} to ${getAccountName(toAccount)}.`
             );
             
             // Reset form
@@ -158,16 +256,57 @@ if (document.querySelector('.dashboard-body')) {
             e.preventDefault();
             
             const payee = document.getElementById('payee').value;
-            const amount = document.getElementById('billAmount').value;
+            const fromAccount = document.getElementById('billFromAccount').value;
+            const amount = parseFloat(document.getElementById('billAmount').value);
+            const accountNumber = document.getElementById('billAccountNumber').value;
+            
+            if (!fromAccount) {
+                alert('Please select an account');
+                return;
+            }
+            
+            // Check if sufficient balance
+            if (accountBalances[fromAccount] < amount) {
+                alert('Insufficient balance!');
+                return;
+            }
+            
+            // Update account balance
+            updateAccountBalance(fromAccount, -amount);
+            
+            // Add transaction
+            const payeeName = document.getElementById('payee').options[document.getElementById('payee').selectedIndex].text;
+            addTransaction(
+                `Bill Payment - ${payeeName}`,
+                -amount,
+                'debit',
+                'Bills',
+                fromAccount
+            );
+            
+            // Reload data
+            loadRecentTransactions();
+            loadTransactionsTable();
+            updateAccountCards();
             
             showModal(
                 'Payment Successful!',
-                `Your bill payment of $${parseFloat(amount).toFixed(2)} to ${payee} has been processed.`
+                `Your bill payment of $${amount.toFixed(2)} to ${payeeName} has been processed.`
             );
             
             // Reset form
             this.reset();
         });
+    }
+   
+    // Update bill payment account options
+    const billFromAccountSelect = document.getElementById('billFromAccount');
+    if (billFromAccountSelect) {
+        billFromAccountSelect.innerHTML = `
+            <option value=\"\">Select Account</option>
+            <option value=\"checking\">Checking (**** 4532) - $${accountBalances.checking.toFixed(2)}</option>
+            <option value=\"savings\">Savings (**** 8721) - $${accountBalances.savings.toFixed(2)}</option>
+        `;
     }
     
     // Logout
@@ -176,7 +315,19 @@ if (document.querySelector('.dashboard-body')) {
         localStorage.removeItem('userName');
         window.location.href = 'index.html';
     });
+        
+    // Add reset data functionality (for demo purposes)
+    // You can add a button in the UI if you want users to reset to default data
+    window.resetBankData = function() {
+        if (confirm('This will reset all account balances and transactions to default values. Continue?')) {
+            localStorage.removeItem('bankTransactions');
+            localStorage.removeItem('bankAccounts');
+            location.reload();
+        }
+    };
     
+    // Initial load of account cards
+    updateAccountCards();
     // Filters for transactions
     const accountFilter = document.getElementById('accountFilter');
     const typeFilter = document.getElementById('typeFilter');
@@ -271,6 +422,82 @@ function loadTransactionsTable() {
             </tbody>
         </table>
     `;
+}
+
+// Update account cards with current balances
+function updateAccountCards() {
+    // Update checking account
+    const checkingBalance = document.querySelector('.checking-card .balance-amount');
+    if (checkingBalance) {
+        checkingBalance.textContent = `$${accountBalances.checking.toFixed(2)}`;
+    }
+    
+    // Update savings account
+    const savingsBalance = document.querySelector('.savings-card .balance-amount');
+    if (savingsBalance) {
+        savingsBalance.textContent = `$${accountBalances.savings.toFixed(2)}`;
+    }
+    
+    // Update credit card
+    const creditBalance = document.querySelector('.credit-card .balance-amount');
+    if (creditBalance) {
+        creditBalance.textContent = `$${accountBalances.credit.toFixed(2)}`;
+    }
+    
+    // Update loan
+    const loanBalance = document.querySelector('.loan-card .balance-amount');
+    if (loanBalance) {
+        loanBalance.textContent = `$${accountBalances.loan.toFixed(2)}`;
+    }
+        
+    // Update account details page
+    const checkingAccountBalance = document.getElementById('checkingAccountBalance');
+    if (checkingAccountBalance) {
+        checkingAccountBalance.textContent = `$${accountBalances.checking.toFixed(2)}`;
+    }
+    
+    const savingsAccountBalance = document.getElementById('savingsAccountBalance');
+    if (savingsAccountBalance) {
+        savingsAccountBalance.textContent = `$${accountBalances.savings.toFixed(2)}`;
+    }
+    
+    // Update transfer form options with current balances
+    updateTransferOptions();
+}
+
+// Update transfer form dropdowns with current balances
+function updateTransferOptions() {
+    const fromAccountSelect = document.getElementById('fromAccount');
+    const toAccountSelect = document.getElementById('toAccount');
+    
+    if (fromAccountSelect) {
+        fromAccountSelect.innerHTML = `
+            <option value=\"\">Select Account</option>
+            <option value=\"checking\">Checking (**** 4532) - $${accountBalances.checking.toFixed(2)}</option>
+            <option value=\"savings\">Savings (**** 8721) - $${accountBalances.savings.toFixed(2)}</option>
+        `;
+    }
+    
+    if (toAccountSelect) {
+        toAccountSelect.innerHTML = `
+            <option value=\"\">Select Account</option>
+            <option value=\"checking\">Checking (**** 4532)</option>
+            <option value=\"savings\">Savings (**** 8721)</option>
+            <option value=\"external\">External Account</option>
+        `;
+    }
+}
+
+// Get account display name
+function getAccountName(accountKey) {
+    const names = {
+        'checking': 'Checking Account',
+        'savings': 'Savings Account',
+        'credit': 'Credit Card',
+        'loan': 'Loan Account',
+        'external': 'External Account'
+    };
+    return names[accountKey] || accountKey;
 }
 
 // Format Date
